@@ -15,7 +15,7 @@
     "node": ">=20.19.0"
   },
   "scripts": {
-    "test": "node --test test/"
+    "test": "node --test"
   },
   "keywords": ["shadcn", "vite", "tanstack", "scaffold", "cli"],
   "license": "MIT"
