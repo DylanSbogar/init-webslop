@@ -9,6 +9,10 @@ function fakeSteps(order) {
     installDeps: () => order.push("installDeps"),
     addAllComponents: () => order.push("addAllComponents"),
     wire: () => order.push("wire"),
+    tidyComponents: () => {
+      order.push("tidyComponents")
+      return 1
+    },
     generateBarrel: () => {
       order.push("generateBarrel")
       return 60
@@ -29,6 +33,7 @@ test("runs the six steps in the specified order", () => {
     "installDeps",
     "addAllComponents",
     "wire",
+    "tidyComponents",
     "generateBarrel",
   ])
 })
@@ -55,6 +60,10 @@ test("passes the resolved project directory to the steps that need it", () => {
     installDeps: (ctx) => (seen.installDeps = ctx.projectDir),
     addAllComponents: (ctx) => (seen.add = ctx.projectDir),
     wire: (ctx) => (seen.wire = ctx.projectDir),
+    tidyComponents: (ctx) => {
+      seen.tidy = ctx.projectDir
+      return 0
+    },
     generateBarrel: (ctx) => {
       seen.barrel = ctx.projectDir
       return 0
@@ -68,5 +77,6 @@ test("passes the resolved project directory to the steps that need it", () => {
   assert.equal(seen.installDeps, "/tmp/w/my-app")
   assert.equal(seen.add, "/tmp/w/my-app")
   assert.equal(seen.wire, "/tmp/w/my-app")
+  assert.equal(seen.tidy, "/tmp/w/my-app")
   assert.equal(seen.barrel, "/tmp/w/my-app")
 })
