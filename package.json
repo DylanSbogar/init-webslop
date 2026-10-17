@@ -1,0 +1,22 @@
+{
+  "name": "init-webslop",
+  "version": "0.1.0",
+  "description": "Scaffold a web app on the shadcn Vite template with TanStack Query, Router and Table",
+  "type": "module",
+  "bin": {
+    "init-webslop": "bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "keywords": ["shadcn", "vite", "tanstack", "scaffold", "cli"],
+  "license": "MIT"
+}
