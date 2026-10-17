@@ -3,6 +3,8 @@
 import { readFileSync } from "node:fs"
 import { createInterface } from "node:readline/promises"
 import { parseArgs, isValidProjectName } from "../src/args.js"
+import { createWebslop } from "../src/pipeline.js"
+import { StepError } from "../src/run.js"
 
 const pkg = JSON.parse(
   readFileSync(new URL("../package.json", import.meta.url), "utf8")
@@ -55,13 +57,40 @@ async function main(argv) {
   }
 
   const name = opts.name ?? (await promptForName())
+
   process.stdout.write(`\n  Creating ${name}\n\n`)
+
+  createWebslop(
+    {
+      name,
+      preset: opts.preset,
+      shadcnVersion: opts.shadcnVersion,
+      cwd: process.cwd(),
+    },
+    undefined,
+    (message) => process.stdout.write(`\n  ${message}\n\n`)
+  )
+
+  process.stdout.write(
+    `\n  Done. Next:\n\n    cd ${name}\n    npm run dev\n\n` +
+      `  The first dev-server start generates src/routeTree.gen.ts.\n` +
+      `  Until then your editor will flag that import as unresolved.\n\n`
+  )
+
   return 0
 }
 
 main(process.argv.slice(2))
   .then((code) => process.exit(code))
   .catch((err) => {
-    process.stderr.write(`\n  Error: ${err.message}\n\n`)
+    if (err instanceof StepError) {
+      process.stderr.write(
+        `\n  Failed during: ${err.phase}\n` +
+          `  Command: ${err.command}\n\n` +
+          `  The partial project was left in place so you can inspect it.\n\n`
+      )
+    } else {
+      process.stderr.write(`\n  ${err.message}\n\n`)
+    }
     process.exit(1)
   })
